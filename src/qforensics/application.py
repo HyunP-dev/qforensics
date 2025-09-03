@@ -14,8 +14,8 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 def run():
     app = QApplication()
-    print(QStyleFactory.keys())
-    app.setStyle('Windows')
+    # print(QStyleFactory.keys())
+    # app.setStyle('Windows')
     window = MainWindow()
     window.show()
     app.exec()

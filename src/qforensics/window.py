@@ -10,6 +10,7 @@ from qforensics.widget import HexViewer
 
 import datetime
 from io import BytesIO
+import platform
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -132,7 +133,6 @@ class MainWindow(QMainWindow):
         path, _ = dialog.getOpenFileName()
         if not path:
             return
-        path = path.replace("/", "\\")
-        if not path.upper().endswith(".E01"):
-            return
+        if platform.system() == "Windows":
+            path = path.replace("/", "\\")
         self.evidenceTree.model().upload(path)

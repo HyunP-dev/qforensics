@@ -7,6 +7,7 @@ from PySide6.QtWidgets import *
 from io import BytesIO
 from binascii import hexlify
 from math import ceil
+import platform
 
 class HexViewer(QWidget):
     def __init__(self):
@@ -31,7 +32,12 @@ class HexViewer(QWidget):
         navigator.layout().addItem(spacer)
 
         self.view = QPlainTextEdit()
-        self.view.setFont("consolas")
+        
+        print(platform.system())
+        if platform.system() == "Windows":
+            self.view.setFont("consolas")
+        if platform.system() == "Darwin":
+            self.view.setFont("Andale Mono")
 
         self.view.setReadOnly(True)
         self.layout().addWidget(self.view)
@@ -54,10 +60,11 @@ class HexViewer(QWidget):
 
         for _ in range(0x4000 // 16):
             line = ""
+            
+            line += f"0x{io.tell():08x}: "
             buffer = io.read(16)
             if len(buffer) == 0:
                 break
-            line += f"0x{io.tell():08x}: "
             line += (buffer[:8].hex(" ") + "  " + buffer[8:].hex(" ")).upper()
             text += f"{line:64}"
             text += ''.join(chr(ch) if 0x20 < ch < 0x7F else '.' for ch in buffer)
