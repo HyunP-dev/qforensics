@@ -1,0 +1,25 @@
+[project]
+name = "qforensics"
+version = "0.1.0"
+description = "Forensics software with Qt"
+authors = [
+    {name = "Hyun Park",email = "hyunp.dev@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "pyside6 (>=6.9.2,<7.0.0)",
+    "libewf-python (>=20240506,<20240507)",
+    "pytsk3 (>=20250729,<20250730)"
+]
+
+[project.scripts]
+qforensics = "qforensics.application:run"
+
+[tool.poetry]
+packages = [{include = "qforensics", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
