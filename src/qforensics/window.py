@@ -6,7 +6,7 @@ from PySide6.QtWidgets import *
 
 from qforensics.model import EvidenceTreeModel
 from qforensics.model.evidencemodel import *
-from qforensics.widget import HexViewer
+from qforensics.widget import *
 
 import datetime
 from io import BytesIO
@@ -55,6 +55,8 @@ class MainWindow(QMainWindow):
         viewerTabs = QTabWidget()
         self.hexview = HexViewer()
         viewerTabs.addTab(self.hexview, "Hex")
+        self.textview = TextViewer()
+        viewerTabs.addTab(self.textview, "문자열")
         rightSplitter.addWidget(viewerTabs)
         
 
@@ -122,10 +124,14 @@ class MainWindow(QMainWindow):
         
         if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_REG:
             if entry.info.meta.size > 0:
-                self.hexview.upload(BytesIO(entry.read_random(0, entry.info.meta.size)))
+                raw = entry.read_random(0, entry.info.meta.size)
+                self.hexview.upload(BytesIO(raw))
+                self.textview.upload(BytesIO(raw))
             else:
                 self.hexview.upload(BytesIO())
+                self.textview.upload(BytesIO())
             self.hexview.show(1)
+            self.textview.show(1)
 
     @Slot()
     def load(self):
