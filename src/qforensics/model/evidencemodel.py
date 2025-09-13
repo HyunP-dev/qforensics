@@ -24,10 +24,10 @@ class EWFImageItem(tree.Node):
             # print(p.addr, p.desc, p.flags, p.len, p.next, p.start, p.table_num)
             volume_item = VolumeItem(p, self, p.desc.decode())
             self.children.append(volume_item)
-            
+
             try:
                 fs_info = pytsk3.FS_Info(img_info, offset=p.start * 512)
-                self.filesystems.append(fs_info) # 이렇게 저장해두지 않으면 메모리에서 해제됨 ㅋㅋㅋ
+                self.filesystems.append(fs_info)  # 이렇게 저장해두지 않으면 메모리에서 해제됨 ㅋㅋㅋ
                 # vbr = img_info.read(p.start * 512, 512)
                 root_dir = fs_info.open_dir("/", 2)
                 volume_item.root_directory = root_dir
@@ -37,15 +37,17 @@ class EWFImageItem(tree.Node):
 
                     if entry.info.meta and entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR:
                         try:
-                            volume_item.children.append(DirectoryItem(entry, volume_item))
+                            volume_item.children.append(
+                                DirectoryItem(entry, volume_item))
                         except Exception as e:
                             print(e)
-                
+
             except:
                 pass
-    
+
     def __str__(self):
         return os.path.basename(self.path)
+
 
 class DirectoryItem(tree.Node):
     def __init__(self, entry: pytsk3.File, parent):
@@ -70,13 +72,14 @@ class DirectoryItem(tree.Node):
                     self._is_initialized = True
             return self._children
         return self._children
-    
+
     @children.setter
     def children(self, o):
         pass
 
     def __str__(self):
         return self.entry.info.name.name.decode()
+
 
 class VolumeItem(tree.Node):
     def __init__(self, partition: pytsk3.TSK_VS_PART_INFO, parent: EWFImageItem, desc: str):
@@ -87,17 +90,18 @@ class VolumeItem(tree.Node):
 
     def __str__(self):
         return str(self.desc)
-    
-        
+
+
 class EvidenceTreeRootItem:
     def __init__(self):
         self.children = []
+
 
 class EvidenceTreeModel(QAbstractItemModel):
     def __init__(self):
         super().__init__()
         self.root_item = EvidenceTreeRootItem()
-    
+
     def upload(self, path):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         self.root_item.children.append(EWFImageItem(path, self.root_item))
@@ -111,13 +115,13 @@ class EvidenceTreeModel(QAbstractItemModel):
             parent_item = self.root_item
         else:
             parent_item = parent.internalPointer()
-        
+
         if type(parent_item) == EvidenceTreeRootItem:
             return parent_item.children.__len__()
-        
+
         if isinstance(parent_item, tree.Node):
             return parent_item.children.__len__()
-        
+
         return 0
 
     def data(self, index, role=Qt.DisplayRole):

@@ -8,6 +8,7 @@ from io import BytesIO
 from math import ceil
 import platform
 
+
 class TextViewer(QWidget):
     def __init__(self):
         super().__init__()
@@ -27,11 +28,12 @@ class TextViewer(QWidget):
         navigator.layout().addWidget(QLabel("/"))
         self.pages = QLabel("")
         navigator.layout().addWidget(self.pages)
-        spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacer = QSpacerItem(
+            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         navigator.layout().addItem(spacer)
 
         self.view = QPlainTextEdit()
-        
+
         print(platform.system())
         if platform.system() == "Windows":
             self.view.setFont("consolas")
@@ -56,9 +58,6 @@ class TextViewer(QWidget):
         io = self.io
         io.seek(0x4000 * (page - 1))
         self.view.setPlainText(io.read(0x4000).decode("ascii", "replace"))
-    
+
     def pageSpinBoxValueChanged(self):
         self.show(self.pageSpinBox.value())
-
-
-

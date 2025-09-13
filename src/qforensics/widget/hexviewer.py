@@ -9,6 +9,7 @@ from binascii import hexlify
 from math import ceil
 import platform
 
+
 class HexViewer(QWidget):
     def __init__(self):
         super().__init__()
@@ -28,11 +29,12 @@ class HexViewer(QWidget):
         navigator.layout().addWidget(QLabel("/"))
         self.pages = QLabel("")
         navigator.layout().addWidget(self.pages)
-        spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacer = QSpacerItem(
+            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         navigator.layout().addItem(spacer)
 
         self.view = QPlainTextEdit()
-        
+
         print(platform.system())
         if platform.system() == "Windows":
             self.view.setFont("consolas")
@@ -60,22 +62,20 @@ class HexViewer(QWidget):
 
         for _ in range(0x4000 // 16):
             line = ""
-            
+
             line += f"0x{io.tell():08x}: "
             buffer = io.read(16)
             if len(buffer) == 0:
                 break
             line += (buffer[:8].hex(" ") + "  " + buffer[8:].hex(" ")).upper()
             text += f"{line:64}"
-            text += ''.join(chr(ch) if 0x20 < ch < 0x7F else '.' for ch in buffer)
+            text += ''.join(chr(ch) if 0x20 < ch <
+                            0x7F else '.' for ch in buffer)
             if len(buffer) < 16:
                 break
             text += "\n"
-            
+
         self.view.setPlainText(text)
-    
+
     def pageSpinBoxValueChanged(self):
         self.show(self.pageSpinBox.value())
-
-
-

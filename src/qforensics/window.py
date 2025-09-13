@@ -12,11 +12,12 @@ import datetime
 from io import BytesIO
 import platform
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.menuBar().addMenu(filemenu := QMenu("파일"))
-        
+
         attachAction = QAction("이미지 탑재", self)
         attachAction.triggered.connect(self.load)
         filemenu.addAction(attachAction)
@@ -58,7 +59,6 @@ class MainWindow(QMainWindow):
         self.textview = TextViewer()
         viewerTabs.addTab(self.textview, "문자열")
         rightSplitter.addWidget(viewerTabs)
-        
 
         self.splitter.addWidget(rightSplitter)
 
@@ -66,11 +66,11 @@ class MainWindow(QMainWindow):
         self.splitter.setStretchFactor(1, 7)
         self.setCentralWidget(self.splitter)
         self.resize(1000, 600)
-    
+
     @Slot(QModelIndex)
     def evidenceTreeDoubleClicked(self, index: QModelIndex):
         directory = None
-        match (item:=index.internalPointer()):
+        match (item := index.internalPointer()):
             case DirectoryItem():
                 directory = item.entry.as_directory()
             case VolumeItem():
@@ -114,14 +114,15 @@ class MainWindow(QMainWindow):
 
             item = QStandardItem(entry.info.name.name.decode())
             item.setData(entry, Qt.ItemDataRole.UserRole)
-            model.appendRow([item, QStandardItem(str(entry.info.meta.size)), QStandardItem(ftype), QStandardItem(str(datetime.datetime.fromtimestamp((entry.info.meta.mtime))))])
-    
+            model.appendRow([item, QStandardItem(str(entry.info.meta.size)), QStandardItem(
+                ftype), QStandardItem(str(datetime.datetime.fromtimestamp((entry.info.meta.mtime))))])
+
     @Slot(QModelIndex)
     def filesViewDoubleClicked(self, index: QModelIndex):
         entry = index.data(Qt.ItemDataRole.UserRole)
         if not isinstance(entry, pytsk3.File):
             return
-        
+
         if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_REG:
             if entry.info.meta.size > 0:
                 raw = entry.read_random(0, entry.info.meta.size)
