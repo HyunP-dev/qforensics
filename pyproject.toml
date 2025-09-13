@@ -10,7 +10,9 @@ requires-python = ">=3.11,<3.14"
 dependencies = [
     "pyside6 (>=6.9.2,<7.0.0)",
     "libewf-python (>=20240506,<20240507)",
-    "pytsk3 (>=20250729,<20250730)"
+    "pytsk3 (>=20250729,<20250730)",
+    "libscca-python (>=20250912,<20250913)",
+    "winfiletime (>=2.1,<3.0)"
 ]
 
 [project.scripts]
