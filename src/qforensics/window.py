@@ -172,6 +172,8 @@ class MainWindow(QMainWindow):
     @Slot(QModelIndex)
     def filesViewDoubleClicked(self, index: QModelIndex):
         entry = index.data(Qt.ItemDataRole.UserRole)
+        self.viewerTabs.setCurrentIndex(0)
+
         if not isinstance(entry, pytsk3.File):
             return
 
@@ -179,11 +181,27 @@ class MainWindow(QMainWindow):
         if tabs_count > 2:
             for i in reversed(range(2, tabs_count)):
                 self.viewerTabs.removeTab(i)
+        
 
         if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_REG:
             stream = TSKBytesIO(entry)
-            stream.seek(4)
-            if stream.read(4) == b"SCCA":
+
+            def is_prefetch(stream: TSKBytesIO) -> bool:
+                offset = stream.tell()
+                stream.seek(4)
+                if stream.read(4) == b"SCCA":
+                    stream.seek(offset)
+                    return True
+
+                stream.seek(0)
+                if stream.read(4) == b"MAM\x04":
+                    stream.seek(offset)
+                    return True
+                
+                stream.seek(offset)
+                return False
+
+            if is_prefetch(stream):
                 viewer = SCCAViewer()
                 self.viewerTabs.addTab(viewer, "분석 결과")
                 viewer.parse(TSKBytesIO(entry))
