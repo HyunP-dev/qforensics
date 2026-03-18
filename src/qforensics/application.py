@@ -17,7 +17,7 @@ def run():
     app = QApplication()
     window = MainWindow()
     if platform.system() == "Windows":
-        app.setStyle('Windows')
+        app.setStyle("Windows")
     if platform.system() == "Darwin":
         pass
     window.show()

@@ -6,7 +6,7 @@ class AbstractROBytesIO(metaclass=ABCMeta):
     @abstractmethod
     def read(self, size=-1) -> bytes:
         pass
-    
+
     @abstractmethod
     def tell(self) -> int:
         pass

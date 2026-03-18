@@ -29,8 +29,7 @@ class HexViewer(QWidget):
         navigator.layout().addWidget(QLabel("/"))
         self.pages = QLabel("")
         navigator.layout().addWidget(self.pages)
-        spacer = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         navigator.layout().addItem(spacer)
 
         self.view = QPlainTextEdit()
@@ -51,7 +50,7 @@ class HexViewer(QWidget):
         self.io = io
         self.io.seek(0, 2)
         self.size = self.io.tell()
-        maximum = ceil(self.size/0x4000)
+        maximum = ceil(self.size / 0x4000)
         self.pageSpinBox.setMaximum(maximum)
         self.pages.setText(str(maximum))
 
@@ -69,8 +68,7 @@ class HexViewer(QWidget):
                 break
             line += (buffer[:8].hex(" ") + "  " + buffer[8:].hex(" ")).upper()
             text += f"{line:64}"
-            text += ''.join(chr(ch) if 0x20 < ch <
-                            0x7F else '.' for ch in buffer)
+            text += "".join(chr(ch) if 0x20 < ch < 0x7F else "." for ch in buffer)
             if len(buffer) < 16:
                 break
             text += "\n"

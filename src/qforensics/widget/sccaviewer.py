@@ -8,6 +8,7 @@ from PySide6.QtWidgets import *
 
 from qforensics.type.io import AbstractROBytesIO
 
+
 class TableView(QWidget):
     def __init__(self, title):
         super().__init__()
@@ -22,11 +23,11 @@ class TableView(QWidget):
         self._treeview = QTreeView()
         self._treeview.setEditTriggers(QTreeView.NoEditTriggers)
         self.layout().addWidget(self._treeview)
-    
+
     @property
     def model(self):
         return self._treeview.model()
-    
+
     @model.setter
     def model(self, model):
         self._treeview.setModel(model)
@@ -43,12 +44,11 @@ class SCCAViewer(QSplitter):
         self.addWidget(self.filesView)
         self.addWidget(self.volumesView)
 
-    
     def parse(self, stream: AbstractROBytesIO):
         handle = pyscca.file()
         handle.open_file_object(stream)
         nnames = handle.get_number_of_filenames()
-        
+
         filesModel = QStandardItemModel()
         filesModel.setHorizontalHeaderLabels(["Filename"])
         for i in range(nnames):
@@ -69,6 +69,3 @@ class SCCAViewer(QSplitter):
                 break
             print(last_time)
         self.timesView.model = timesModel
-        
-
-

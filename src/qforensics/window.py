@@ -17,19 +17,18 @@ import platform
 import os
 
 
-
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        
+
         self.addToolBar(toolbar := QToolBar())
         toolbar.setFloatable(False)
         toolbar.setMovable(False)
         toolbar.setFixedHeight(24)
         attachAction = QAction("이미지 탑재", self)
         attachAction.setIcon(
-            QIcon(os.path.join(__file__, "..", "resources/icons/drive--plus.png")))
+            QIcon(os.path.join(__file__, "..", "resources/icons/drive--plus.png"))
+        )
         attachAction.triggered.connect(self.load)
 
         toolbar.addAction(attachAction)
@@ -140,23 +139,41 @@ class MainWindow(QMainWindow):
                     if entry.info.meta.type == pytsk3.TSK_FS_NAME_TYPE_WHT:
                         ftype = "Whiteout (openbsd)"
                     if entry.info.meta.type == pytsk3.TSK_FS_NAME_TYPE_VIRT:
-                        ftype = "Special (TSK added \"Virtual\" files)"
+                        ftype = 'Special (TSK added "Virtual" files)'
                     if entry.info.meta.type == pytsk3.TSK_FS_NAME_TYPE_VIRT_DIR:
-                        ftype = "Special (TSK added \"Virtual\" directories)"
+                        ftype = 'Special (TSK added "Virtual" directories)'
 
                 item = QStandardItem(entry.info.name.name.decode())
                 item.setData(entry, Qt.ItemDataRole.UserRole)
                 if entry.info.meta is not None:
-                    model.appendRow([item, QStandardItem(str(entry.info.meta.size)), QStandardItem(
-                        ftype), QStandardItem(str(datetime.datetime.fromtimestamp((entry.info.meta.mtime))))])
+                    model.appendRow(
+                        [
+                            item,
+                            QStandardItem(str(entry.info.meta.size)),
+                            QStandardItem(ftype),
+                            QStandardItem(
+                                str(
+                                    datetime.datetime.fromtimestamp(
+                                        (entry.info.meta.mtime)
+                                    )
+                                )
+                            ),
+                        ]
+                    )
                 else:
-                    model.appendRow([item, QStandardItem(""), QStandardItem(ftype), QStandardItem("")])
-
+                    model.appendRow(
+                        [
+                            item,
+                            QStandardItem(""),
+                            QStandardItem(ftype),
+                            QStandardItem(""),
+                        ]
+                    )
 
     @Slot(QModelIndex)
     def evidenceTreeDoubleClicked(self, index: QModelIndex):
         directory = None
-        match (item := index.internalPointer()):
+        match item := index.internalPointer():
             case DirectoryItem():
                 directory = item.entry.as_directory()
             case VolumeItem():
@@ -166,8 +183,6 @@ class MainWindow(QMainWindow):
         if directory is None:
             return
         self.showFiles(directory)
-        
-        
 
     @Slot(QModelIndex)
     def filesViewDoubleClicked(self, index: QModelIndex):
@@ -181,7 +196,6 @@ class MainWindow(QMainWindow):
         if tabs_count > 2:
             for i in reversed(range(2, tabs_count)):
                 self.viewerTabs.removeTab(i)
-        
 
         if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_REG:
             stream = TSKBytesIO(entry)
@@ -197,7 +211,7 @@ class MainWindow(QMainWindow):
                 if stream.read(4) == b"MAM\x04":
                     stream.seek(offset)
                     return True
-                
+
                 stream.seek(offset)
                 return False
 
@@ -205,7 +219,6 @@ class MainWindow(QMainWindow):
                 viewer = SCCAViewer()
                 self.viewerTabs.addTab(viewer, "분석 결과")
                 viewer.parse(TSKBytesIO(entry))
-                
 
             if entry.info.meta.size > 0:
                 raw = entry.read_random(0, entry.info.meta.size)
@@ -217,7 +230,7 @@ class MainWindow(QMainWindow):
                 self.textview.upload(BytesIO())
             self.hexview.show(1)
             self.textview.show(1)
-    
+
     @Slot(QModelIndex)
     def resultViewDoubleClicked(self, index: QModelIndex):
         match index.data(Qt.ItemDataRole.DisplayRole):
@@ -232,7 +245,7 @@ class MainWindow(QMainWindow):
                                 try:
                                     directory = fs.open_dir("/Windows/Prefetch", 2)
                                     directories.append(directory)
-                                    
+
                                 except:
                                     continue
                 self.showFiles(*directories)

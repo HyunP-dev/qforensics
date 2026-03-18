@@ -27,7 +27,9 @@ class EWFImageItem(tree.Node):
 
             try:
                 fs_info = pytsk3.FS_Info(img_info, offset=p.start * 512)
-                self.filesystems.append(fs_info)  # 이렇게 저장해두지 않으면 메모리에서 해제됨 ㅋㅋㅋ
+                self.filesystems.append(
+                    fs_info
+                )  # 이렇게 저장해두지 않으면 메모리에서 해제됨 ㅋㅋㅋ
                 # vbr = img_info.read(p.start * 512, 512)
                 root_dir = fs_info.open_dir("/", 2)
                 volume_item.root_directory = root_dir
@@ -35,10 +37,14 @@ class EWFImageItem(tree.Node):
                     if entry.info.name.name in [b".", b".."]:
                         continue
 
-                    if entry.info.meta and entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR:
+                    if (
+                        entry.info.meta
+                        and entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR
+                    ):
                         try:
                             volume_item.children.append(
-                                DirectoryItem(entry, volume_item))
+                                DirectoryItem(entry, volume_item)
+                            )
                         except Exception as e:
                             print(e)
 
@@ -60,14 +66,20 @@ class DirectoryItem(tree.Node):
     @property
     def children(self):
         if not self._is_initialized:
-            if self.entry.info.meta and self.entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR:
+            if (
+                self.entry.info.meta
+                and self.entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR
+            ):
                 if isinstance(self.entry, pytsk3.File):
                     directory = self.entry.as_directory()
                     for entry in directory:
                         dirname = entry.info.name.name.decode()
                         if dirname == "." or dirname == "..":
                             continue
-                        if entry.info.meta and entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR:
+                        if (
+                            entry.info.meta
+                            and entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR
+                        ):
                             self._children.append(DirectoryItem(entry, self))
                     self._is_initialized = True
             return self._children
@@ -82,7 +94,9 @@ class DirectoryItem(tree.Node):
 
 
 class VolumeItem(tree.Node):
-    def __init__(self, partition: pytsk3.TSK_VS_PART_INFO, parent: EWFImageItem, desc: str):
+    def __init__(
+        self, partition: pytsk3.TSK_VS_PART_INFO, parent: EWFImageItem, desc: str
+    ):
         super().__init__(parent)
         self.partition = partition
         self.desc = desc

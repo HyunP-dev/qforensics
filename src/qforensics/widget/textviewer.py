@@ -28,8 +28,7 @@ class TextViewer(QWidget):
         navigator.layout().addWidget(QLabel("/"))
         self.pages = QLabel("")
         navigator.layout().addWidget(self.pages)
-        spacer = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         navigator.layout().addItem(spacer)
 
         self.view = QPlainTextEdit()
@@ -50,7 +49,7 @@ class TextViewer(QWidget):
         self.io = io
         self.io.seek(0, 2)
         self.size = self.io.tell()
-        maximum = ceil(self.size/0x4000)
+        maximum = ceil(self.size / 0x4000)
         self.pageSpinBox.setMaximum(maximum)
         self.pages.setText(str(maximum))
 
