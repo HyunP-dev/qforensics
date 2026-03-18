@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
         self.evidenceTree.setModel(EvidenceTreeModel())
         self.evidenceTree.setHeaderHidden(True)
         self.evidenceTree.doubleClicked.connect(self.evidenceTreeDoubleClicked)
-        self.evidenceTree.setEditTriggers(QTreeView.NoEditTriggers)
+        self.evidenceTree.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
 
         self.leftPanel = QWidget()
         self.leftPanel.setLayout(QVBoxLayout())

@@ -130,7 +130,7 @@ class EvidenceTreeModel(QAbstractItemModel):
         else:
             parent_item = parent.internalPointer()
 
-        if type(parent_item) == EvidenceTreeRootItem:
+        if isinstance(parent_item, EvidenceTreeRootItem):
             return parent_item.children.__len__()
 
         if isinstance(parent_item, tree.Node):
@@ -138,11 +138,11 @@ class EvidenceTreeModel(QAbstractItemModel):
 
         return 0
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         if not index.isValid():
             return None
 
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             item = index.internalPointer()
             if isinstance(item, tree.Node):
                 return str(item)
@@ -158,7 +158,7 @@ class EvidenceTreeModel(QAbstractItemModel):
         else:
             parent_item = parent.internalPointer()
 
-        if type(parent_item) == EvidenceTreeRootItem:
+        if isinstance(parent_item, EvidenceTreeRootItem):
             child_item = parent_item.children[row]
             if child_item:
                 return self.createIndex(row, column, child_item)

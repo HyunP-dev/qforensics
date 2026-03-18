@@ -5,7 +5,6 @@ from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 
 from io import BytesIO
-from binascii import hexlify
 from math import ceil
 import platform
 
@@ -13,24 +12,26 @@ import platform
 class HexViewer(QWidget):
     def __init__(self):
         super().__init__()
-        self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().addWidget(navigator := QWidget())
-        navigator.setLayout(QHBoxLayout())
-        navigator.layout().setContentsMargins(10, 10, 0, 0)
-        navigator.layout().addWidget(QLabel("Page: "))
+        self.setLayout(layout := QVBoxLayout())
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(navigator := QWidget())
+        navigator.setLayout(nav_layout := QHBoxLayout())
+        nav_layout.setContentsMargins(10, 10, 0, 0)
+        nav_layout.addWidget(QLabel("Page: "))
         pageSpinBox = QSpinBox()
         pageSpinBox.setMinimum(1)
         pageSpinBox.setMaximum(1)
         pageSpinBox.valueChanged.connect(self.pageSpinBoxValueChanged)
         self.pageSpinBox = pageSpinBox
         pageSpinBox.setFixedWidth(72)
-        navigator.layout().addWidget(pageSpinBox)
-        navigator.layout().addWidget(QLabel("/"))
+        nav_layout.addWidget(pageSpinBox)
+        nav_layout.addWidget(QLabel("/"))
         self.pages = QLabel("")
-        navigator.layout().addWidget(self.pages)
-        spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        navigator.layout().addItem(spacer)
+        nav_layout.addWidget(self.pages)
+        spacer = QSpacerItem(
+            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
+        )
+        nav_layout.addItem(spacer)
 
         self.view = QPlainTextEdit()
 
@@ -41,16 +42,16 @@ class HexViewer(QWidget):
             self.view.setFont("Andale Mono")
 
         self.view.setReadOnly(True)
-        self.layout().addWidget(self.view)
+        layout.addWidget(self.view)
 
         self.io = BytesIO()
-        self.size = 0
+        self.filesize = 0
 
     def upload(self, io: BytesIO):
         self.io = io
         self.io.seek(0, 2)
-        self.size = self.io.tell()
-        maximum = ceil(self.size / 0x4000)
+        self.filesize = self.io.tell()
+        maximum = ceil(self.filesize / 0x4000)
         self.pageSpinBox.setMaximum(maximum)
         self.pages.setText(str(maximum))
 
