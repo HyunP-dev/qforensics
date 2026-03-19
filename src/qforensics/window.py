@@ -21,6 +21,10 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.setCorner(Qt.TopLeftCorner, Qt.LeftDockWidgetArea)
+        self.setCorner(Qt.BottomLeftCorner, Qt.LeftDockWidgetArea)
+
+
         self.addToolBar(toolbar := QToolBar())
         toolbar.setFloatable(False)
         toolbar.setMovable(False)
@@ -45,12 +49,12 @@ class MainWindow(QMainWindow):
         self.evidenceTree.doubleClicked.connect(self.evidenceTreeDoubleClicked)
         self.evidenceTree.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
 
-        self.leftPanel = QWidget()
-        self.leftPanel.setLayout(QVBoxLayout())
-        self.leftPanel.layout().setContentsMargins(0, 0, 0, 0)
-        self.leftTabs = QTabWidget()
-        self.leftPanel.layout().addWidget(self.leftTabs)
-        self.leftTabs.addTab(self.evidenceTree, "탐색 트리")
+        evidenceTreeDock = QDockWidget("탐색 트리", self)
+        # evidenceTreeDock.setLayout(QVBoxLayout())
+
+        # evidenceTreeDock.layout().setContentsMargins(0, 0, 0, 0)
+        evidenceTreeDock.setWidget(self.evidenceTree)
+
 
         self.resultTree = QTreeView()
         self.resultTree.setModel(ArtifactModel())
@@ -58,31 +62,20 @@ class MainWindow(QMainWindow):
         self.resultTree.setEditTriggers(QTreeView.NoEditTriggers)
         self.resultTree.expandAll()
         self.resultTree.doubleClicked.connect(self.resultViewDoubleClicked)
-        self.leftTabs.addTab(self.resultTree, "분석 트리")
 
-        self.leftTabs.tabBarClicked.connect(self.leftTabBarClicked)
 
-        rightPanel = QWidget()
-        rightPanel.setLayout(QVBoxLayout())
-        rightPanel.layout().setContentsMargins(0, 0, 0, 0)
-        rightTabs = QTabWidget()
-        rightPanel.layout().addWidget(rightTabs)
         filesView = QTreeView()
         self.filesView = filesView
         filesView.setEditTriggers(QTreeView.NoEditTriggers)
         filesView.setRootIsDecorated(False)
-        rightTabs.addTab(self.filesView, "파일 목록")
         filesView.doubleClicked.connect(self.filesViewDoubleClicked)
-        self.explorerRightPanel = rightPanel
+        
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, evidenceTreeDock)
 
-        self.splitter = QSplitter()
-        self.splitter.addWidget(self.leftPanel)
+        explorerRightDock = QDockWidget("파일 목록", self)
+        explorerRightDock.setWidget(self.filesView)
+        self.addDockWidget(Qt.DockWidgetArea.TopDockWidgetArea, explorerRightDock)
 
-        rightSplitter = QSplitter()
-        rightSplitter.setOrientation(Qt.Orientation.Vertical)
-        rightSplitter.addWidget(self.explorerRightPanel)
-
-        self.explorerRightSplitter = rightSplitter
 
         viewerTabs = QTabWidget()
         self.hexview = HexViewer()
@@ -90,18 +83,12 @@ class MainWindow(QMainWindow):
         self.textview = TextViewer()
         viewerTabs.addTab(self.textview, "문자열")
         self.viewerTabs = viewerTabs
-        rightSplitter.addWidget(viewerTabs)
+        
 
-        self.splitter.addWidget(rightSplitter)
-
-        resultRightView = QWidget()
-        self.splitter.addWidget(resultRightView)
-        resultRightView.hide()
-        self.resultRightView = resultRightView
-
-        self.splitter.setStretchFactor(0, 3)
-        self.splitter.setStretchFactor(1, 7)
-        self.setCentralWidget(self.splitter)
+        self.setDockNestingEnabled(True)
+        self.resizeDocks([evidenceTreeDock, explorerRightDock], [250, 750], Qt.Orientation.Horizontal)
+        self.resizeDocks([explorerRightDock], [300], Qt.Vertical)
+        self.setCentralWidget(self.viewerTabs)
         self.resize(1000, 600)
 
     @Slot(int)
