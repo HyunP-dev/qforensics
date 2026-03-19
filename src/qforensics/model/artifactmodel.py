@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from PySide6.QtGui import *
 from PySide6.QtCore import *
+from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-
 
 RESULT_HEADERS = {
     "로그온 / 로그오프 활동": [

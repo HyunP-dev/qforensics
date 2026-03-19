@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from PySide6.QtGui import *
-from PySide6.QtCore import *
-from PySide6.QtWidgets import *
-
-import signal
 import platform
+import signal
+
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 from .handler import *
 from .window import MainWindow

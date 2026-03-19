@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from PySide6.QtGui import *
-from PySide6.QtCore import *
-from PySide6.QtWidgets import *
+import os
+
 import pyewf
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 from qforensics.handler import *
 from qforensics.type import tree
-
-import os
 
 
 class EWFImageItem(tree.Node):
@@ -141,6 +141,16 @@ class EvidenceTreeModel(QAbstractItemModel):
     def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         if not index.isValid():
             return None
+
+        if role == Qt.ItemDataRole.DecorationRole:
+            item = index.internalPointer()
+            match item:
+                case EWFImageItem():
+                    return QIcon("images\\icons\\box-search-result.png")
+                case VolumeItem():
+                    return QIcon("images\\icons\\drive.png")
+                case DirectoryItem():
+                    return QIcon("images\\icons\\folder.png")
 
         if role == Qt.ItemDataRole.DisplayRole:
             item = index.internalPointer()

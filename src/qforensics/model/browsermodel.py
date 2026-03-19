@@ -1,10 +1,9 @@
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
-from PySide6.QtGui import *
+import datetime
 
 import pytsk3
-
-import datetime
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 
 class TSKFileBrowserModel(QAbstractTableModel):
@@ -42,6 +41,14 @@ class TSKFileBrowserModel(QAbstractTableModel):
             ftype = 'Special (TSK added "Virtual" directories)'
         return ftype
 
+    @staticmethod
+    def __entry_key(entry):
+        type_, name = entry.info.meta.type, entry.info.name.name
+        if type_ == pytsk3.TSK_FS_META_TYPE_DIR:
+            return (0, name)
+        else:
+            return (1, name)
+
     def open_dir(self, directory):
         self._curdir = directory
 
@@ -50,6 +57,8 @@ class TSKFileBrowserModel(QAbstractTableModel):
                 continue
             if entry.info.meta is not None:  # 이것도 나중에 핸들링해야 하지 않나.
                 self._internal_entries.append(entry)
+
+        self._internal_entries.sort(key=self.__entry_key)
 
     def columnCount(self, parent=QModelIndex()):
         return 4
@@ -70,10 +79,16 @@ class TSKFileBrowserModel(QAbstractTableModel):
                 case 3:
                     return str(datetime.datetime.fromtimestamp((entry.info.meta.mtime)))
 
+        if role == Qt.ItemDataRole.DecorationRole and index.column() == 0:
+            filename = entry.info.name.name.decode()
+            if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR:
+                return QIcon(".\\images\\icons\\folder.png")
+            return QFileIconProvider().icon(QFileInfo(filename))
+
         if role == Qt.ItemDataRole.UserRole:
             return entry
-    
-    def headerData(self, section, orientation, /, role = ...):
+
+    def headerData(self, section, orientation, /, role=...):
         if orientation == Qt.Orientation.Horizontal:
             if role == Qt.ItemDataRole.DisplayRole:
                 return ["파일명", "크기", "타입", "변경 시간"][section]

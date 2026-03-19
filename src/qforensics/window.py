@@ -1,29 +1,34 @@
 from __future__ import annotations
 
-from PySide6.QtGui import *
+import datetime
+import os
+import platform
+from io import BytesIO
+
 from PySide6.QtCore import *
+from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
 from qforensics.model import *
 from qforensics.model.evidencemodel import *
-
-from qforensics.widget import *
 from qforensics.type.tskwrapper import TSKBytesIO
-
-
-import datetime
-from io import BytesIO
-import platform
-import os
+from qforensics.widget import *
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.setStyleSheet("""
+        QDockWidget::title {
+            padding: 3px;
+            border: 1px solid #a0a0a0;
+            border-radius: 1px;
+        }
+        """)
+
         self.setCorner(Qt.TopLeftCorner, Qt.LeftDockWidgetArea)
         self.setCorner(Qt.BottomLeftCorner, Qt.LeftDockWidgetArea)
-
 
         self.addToolBar(toolbar := QToolBar())
         toolbar.setFloatable(False)
@@ -55,7 +60,6 @@ class MainWindow(QMainWindow):
         # evidenceTreeDock.layout().setContentsMargins(0, 0, 0, 0)
         evidenceTreeDock.setWidget(self.evidenceTree)
 
-
         self.resultTree = QTreeView()
         self.resultTree.setModel(ArtifactModel())
         self.resultTree.setHeaderHidden(True)
@@ -63,19 +67,17 @@ class MainWindow(QMainWindow):
         self.resultTree.expandAll()
         self.resultTree.doubleClicked.connect(self.resultViewDoubleClicked)
 
-
         filesView = QTreeView()
         self.filesView = filesView
         filesView.setEditTriggers(QTreeView.NoEditTriggers)
         filesView.setRootIsDecorated(False)
         filesView.doubleClicked.connect(self.filesViewDoubleClicked)
-        
+
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, evidenceTreeDock)
 
         explorerRightDock = QDockWidget("파일 목록", self)
         explorerRightDock.setWidget(self.filesView)
         self.addDockWidget(Qt.DockWidgetArea.TopDockWidgetArea, explorerRightDock)
-
 
         viewerTabs = QTabWidget()
         self.hexview = HexViewer()
@@ -83,12 +85,15 @@ class MainWindow(QMainWindow):
         self.textview = TextViewer()
         viewerTabs.addTab(self.textview, "문자열")
         self.viewerTabs = viewerTabs
-        
 
         self.setDockNestingEnabled(True)
-        self.resizeDocks([evidenceTreeDock, explorerRightDock], [250, 750], Qt.Orientation.Horizontal)
+        self.resizeDocks(
+            [evidenceTreeDock, explorerRightDock], [250, 750], Qt.Orientation.Horizontal
+        )
         self.resizeDocks([explorerRightDock], [300], Qt.Vertical)
         self.setCentralWidget(self.viewerTabs)
+        self.setStatusBar(QStatusBar(self))
+
         self.resize(1000, 600)
 
     @Slot(int)

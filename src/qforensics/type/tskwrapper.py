@@ -1,4 +1,5 @@
 import os
+
 import pytsk3
 
 from qforensics.type.io import AbstractROBytesIO

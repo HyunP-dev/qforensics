@@ -1,5 +1,5 @@
-from abc import ABCMeta, abstractmethod
 import os
+from abc import ABCMeta, abstractmethod
 
 
 class AbstractROBytesIO(metaclass=ABCMeta):

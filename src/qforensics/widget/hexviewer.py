@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from PySide6.QtGui import *
-from PySide6.QtCore import *
-from PySide6.QtWidgets import *
-
+import platform
 from io import BytesIO
 from math import ceil
-import platform
+
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 
 class HexViewer(QWidget):
