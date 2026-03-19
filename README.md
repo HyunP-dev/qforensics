@@ -12,4 +12,4 @@ uv run qforensics
 
 ## Screenshots
 
-![](images/Capture.PNG)
+![](screenshots/Capture.PNG)
