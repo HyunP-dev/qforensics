@@ -146,11 +146,11 @@ class EvidenceTreeModel(QAbstractItemModel):
             item = index.internalPointer()
             match item:
                 case EWFImageItem():
-                    return QIcon("images\\icons\\box-search-result.png")
+                    return QIcon("images/icons/box-search-result.png")
                 case VolumeItem():
-                    return QIcon("images\\icons\\drive.png")
+                    return QIcon("images/icons/drive.png")
                 case DirectoryItem():
-                    return QIcon("images\\icons\\folder.png")
+                    return QIcon("images/icons/folder.png")
 
         if role == Qt.ItemDataRole.DisplayRole:
             item = index.internalPointer()
