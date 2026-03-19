@@ -82,7 +82,7 @@ class TSKFileBrowserModel(QAbstractTableModel):
         if role == Qt.ItemDataRole.DecorationRole and index.column() == 0:
             filename = entry.info.name.name.decode()
             if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR:
-                return QIcon(".\\images\\icons\\folder.png")
+                return QIcon("./images/icons/folder.png")
             return QFileIconProvider().icon(QFileInfo(filename))
 
         if role == Qt.ItemDataRole.UserRole:
