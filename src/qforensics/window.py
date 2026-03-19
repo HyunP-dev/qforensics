@@ -109,66 +109,9 @@ class MainWindow(QMainWindow):
         print(index)
 
     def showFiles(self, *directories):
-        model = QStandardItemModel()
-        model.setHorizontalHeaderLabels(["파일명", "크기", "타입", "변경 시간"])
+        model = TSKFileBrowserModel()
+        model.open_dir(directories[0])
         self.filesView.setModel(model)
-        for directory in directories:
-            for entry in directory:
-                if entry.info.name.name in [b".", b".."]:
-                    continue
-                ftype = ""
-                if entry.info.meta:
-                    if entry.info.meta.type == pytsk3.TSK_FS_NAME_TYPE_UNDEF:
-                        ftype = "Unknown type"
-                    if entry.info.meta.type == pytsk3.TSK_FS_NAME_TYPE_FIFO:
-                        ftype = "Named pipe"
-                    if entry.info.meta.type == pytsk3.TSK_FS_NAME_TYPE_CHR:
-                        ftype = "Character device"
-                    if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR:
-                        ftype = "Directory"
-                    if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_BLK:
-                        ftype = "Block device"
-                    if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_REG:
-                        ftype = "Regular file"
-                    if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_LNK:
-                        ftype = "Symbolic link"
-                    if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_SOCK:
-                        ftype = "Socket"
-                    if entry.info.meta.type == pytsk3.TSK_FS_NAME_TYPE_SHAD:
-                        ftype = "Shadow inode (solaris)"
-                    if entry.info.meta.type == pytsk3.TSK_FS_NAME_TYPE_WHT:
-                        ftype = "Whiteout (openbsd)"
-                    if entry.info.meta.type == pytsk3.TSK_FS_NAME_TYPE_VIRT:
-                        ftype = 'Special (TSK added "Virtual" files)'
-                    if entry.info.meta.type == pytsk3.TSK_FS_NAME_TYPE_VIRT_DIR:
-                        ftype = 'Special (TSK added "Virtual" directories)'
-
-                item = QStandardItem(entry.info.name.name.decode())
-                item.setData(entry, Qt.ItemDataRole.UserRole)
-                if entry.info.meta is not None:
-                    model.appendRow(
-                        [
-                            item,
-                            QStandardItem(str(entry.info.meta.size)),
-                            QStandardItem(ftype),
-                            QStandardItem(
-                                str(
-                                    datetime.datetime.fromtimestamp(
-                                        (entry.info.meta.mtime)
-                                    )
-                                )
-                            ),
-                        ]
-                    )
-                else:
-                    model.appendRow(
-                        [
-                            item,
-                            QStandardItem(""),
-                            QStandardItem(ftype),
-                            QStandardItem(""),
-                        ]
-                    )
 
     @Slot(QModelIndex)
     def evidenceTreeDoubleClicked(self, index: QModelIndex):
