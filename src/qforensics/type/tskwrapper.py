@@ -13,8 +13,9 @@ class TSKBytesIO(AbstractROBytesIO):
 
     def read(self, size=-1) -> bytes:
         if size == -1:
-            self._offset = self._size()
-            return self._entry.read_random(self._offset, self._size - self._offset)
+            raw = self._entry.read_random(self._offset, self._size - self._offset)
+            self._offset = self._size
+            return raw
         if self._offset + size >= self._size:
             size = self._size - self._offset
         print(self._offset, size)

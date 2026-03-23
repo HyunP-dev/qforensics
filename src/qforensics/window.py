@@ -13,6 +13,8 @@ from qforensics.model import *
 from qforensics.model.evidencemodel import *
 from qforensics.type.tskwrapper import TSKBytesIO
 from qforensics.widget import *
+from qforensics.widget.container import DynamicContainer
+from qforensics.widget.photoviewer import PhotoViewer
 
 
 class MainWindow(QMainWindow):
@@ -85,6 +87,8 @@ class MainWindow(QMainWindow):
         self.textview = TextViewer()
         viewerTabs.addTab(self.textview, "문자열")
         self.viewerTabs = viewerTabs
+        self.preview = DynamicContainer()
+        viewerTabs.addTab(self.preview, "미리보기")
 
         self.setDockNestingEnabled(True)
         self.resizeDocks(
@@ -122,18 +126,30 @@ class MainWindow(QMainWindow):
     @Slot(QModelIndex)
     def filesViewDoubleClicked(self, index: QModelIndex):
         entry = index.data(Qt.ItemDataRole.UserRole)
-        self.viewerTabs.setCurrentIndex(0)
-
+        
         if not isinstance(entry, pytsk3.File):
             return
-
-        tabs_count = self.viewerTabs.count()
-        if tabs_count > 2:
-            for i in reversed(range(2, tabs_count)):
-                self.viewerTabs.removeTab(i)
+        
+        self.preview.replace_widget(QWidget())
 
         if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_REG:
             stream = TSKBytesIO(entry)
+
+            def is_jpg(stream: TSKBytesIO) -> bool:
+                offset = stream.tell()
+                stream.seek(0)
+
+                result = False
+                if stream.read(4) == b"\xFF\xD8\xFF\xE1":
+                    result = True
+
+                stream.seek(offset)
+                return result
+            
+            if is_jpg(stream):
+                viewer = PhotoViewer(parent=self)
+                viewer.open(stream.read())
+                self.preview.replace_widget(viewer)
 
             def is_prefetch(stream: TSKBytesIO) -> bool:
                 offset = stream.tell()
@@ -152,7 +168,7 @@ class MainWindow(QMainWindow):
 
             if is_prefetch(stream):
                 viewer = SCCAViewer()
-                self.viewerTabs.addTab(viewer, "분석 결과")
+                self.preview.replace_widget(viewer)
                 viewer.parse(TSKBytesIO(entry))
 
             if entry.info.meta.size > 0:

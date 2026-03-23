@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import encodings
+import encodings.aliases
 import platform
 from io import BytesIO
 from math import ceil
@@ -21,7 +23,7 @@ class TextViewer(QWidget):
         pageSpinBox = QSpinBox()
         pageSpinBox.setMinimum(1)
         pageSpinBox.setMaximum(1)
-        pageSpinBox.valueChanged.connect(self.pageSpinBoxValueChanged)
+        pageSpinBox.valueChanged.connect(self.changed)
         self.pageSpinBox = pageSpinBox
         pageSpinBox.setFixedWidth(72)
         navigator.layout().addWidget(pageSpinBox)
@@ -30,7 +32,16 @@ class TextViewer(QWidget):
         navigator.layout().addWidget(self.pages)
         spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         navigator.layout().addItem(spacer)
+        navigator.layout().addWidget(QLabel("Encoding: "))
 
+        encodingCBox = QComboBox(self)
+        for value in sorted(set(encodings.aliases.aliases.values())):
+            encodingCBox.addItem(str(value))
+
+        navigator.layout().addWidget(encodingCBox)
+        self.encodingCBox = encodingCBox
+        self.encodingCBox.setCurrentText("ascii")
+        self.encodingCBox.currentTextChanged.connect(self.changed)
         self.view = QPlainTextEdit()
 
         print(platform.system())
@@ -56,7 +67,8 @@ class TextViewer(QWidget):
     def show(self, page: int):
         io = self.io
         io.seek(0x4000 * (page - 1))
-        self.view.setPlainText(io.read(0x4000).decode("ascii", "replace"))
+        self.view.setPlainText(io.read(0x4000).decode(self.encodingCBox.currentText(), "ignore"))
 
-    def pageSpinBoxValueChanged(self):
+    def changed(self):
         self.show(self.pageSpinBox.value())
+    
