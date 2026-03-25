@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime
 import os
 import platform
 from io import BytesIO
@@ -30,8 +29,8 @@ class MainWindow(QMainWindow):
         }
         """)
 
-        self.setCorner(Qt.TopLeftCorner, Qt.LeftDockWidgetArea)
-        self.setCorner(Qt.BottomLeftCorner, Qt.LeftDockWidgetArea)
+        self.setCorner(Qt.Corner.TopLeftCorner, Qt.DockWidgetArea.LeftDockWidgetArea)
+        self.setCorner(Qt.Corner.BottomLeftCorner, Qt.DockWidgetArea.LeftDockWidgetArea)
 
         self.addToolBar(toolbar := QToolBar())
         toolbar.setFloatable(False)
@@ -66,13 +65,13 @@ class MainWindow(QMainWindow):
         self.resultTree = QTreeView()
         self.resultTree.setModel(ArtifactModel())
         self.resultTree.setHeaderHidden(True)
-        self.resultTree.setEditTriggers(QTreeView.NoEditTriggers)
+        self.resultTree.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
         self.resultTree.expandAll()
         self.resultTree.doubleClicked.connect(self.resultViewDoubleClicked)
 
         filesView = QTreeView()
         self.filesView = filesView
-        filesView.setEditTriggers(QTreeView.NoEditTriggers)
+        filesView.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
         filesView.setRootIsDecorated(False)
         filesView.doubleClicked.connect(self.filesViewDoubleClicked)
 
@@ -95,7 +94,7 @@ class MainWindow(QMainWindow):
         self.resizeDocks(
             [evidenceTreeDock, explorerRightDock], [250, 750], Qt.Orientation.Horizontal
         )
-        self.resizeDocks([explorerRightDock], [300], Qt.Vertical)
+        self.resizeDocks([explorerRightDock], [300], Qt.Orientation.Vertical)
         self.setCentralWidget(self.viewerTabs)
         self.setStatusBar(QStatusBar(self))
 
@@ -173,13 +172,12 @@ class MainWindow(QMainWindow):
                 viewer.parse(TSKBytesIO(entry))
 
             if entry.info.meta.size > 0:
-                raw = entry.read_random(0, entry.info.meta.size)
                 self.hexview.upload(TSKBytesIO(entry))
                 self.textview.upload(TSKBytesIO(entry))
-
             else:
                 self.hexview.upload(BytesIO())
                 self.textview.upload(BytesIO())
+                
             self.hexview.show(1)
             self.textview.show(1)
 
@@ -188,7 +186,9 @@ class MainWindow(QMainWindow):
         match index.data(Qt.ItemDataRole.DisplayRole):
             case "프로그램 실행 기록":
                 model = self.evidenceTree.model()
-                model: EvidenceTreeModel
+                if not isinstance(model, EvidenceTreeModel):
+                    return
+                
                 directories = []
                 for image_item in model.root_item.children:
                     match image_item:
@@ -210,4 +210,5 @@ class MainWindow(QMainWindow):
             return
         if platform.system() == "Windows":
             path = path.replace("/", "\\")
-        self.evidenceTree.model().upload(path)
+        if isinstance(model:=self.evidenceTree.model(), EvidenceTreeModel):
+            model.upload(path)
