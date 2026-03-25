@@ -115,13 +115,20 @@ class HiveValueModel(QAbstractTableModel):
     def data(self, index:QModelIndex, role=Qt.ItemDataRole):
         value = self.key.get_value(index.row())
         if role == Qt.ItemDataRole.DisplayRole:
+            type_str = self.VALUES_TYPE[value.get_type()]
             match index.column():
                 case 0:
-                    return str(value.get_name())
+                    return value.get_name() or "(Default)"
                 case 1:
-                    return self.VALUES_TYPE[value.get_type()]
+                    return type_str
                 case 2:
-                    return value.get_data_as_string() or ""
+                    if value.get_type() == pyregf.value_types.STRING:
+                        return value.get_data_as_string() or ""
+                    if value.get_type() == pyregf.value_types.BINARY_DATA:
+                        return value.get_data().hex(" ")
+                    if "INTEGER" in type_str:
+                        return hex(value.get_data_as_integer())
+                    return str(value.get_data())
 
     def headerData(self, section, orientation, /, role=...):
         if orientation == Qt.Orientation.Horizontal:
@@ -136,6 +143,7 @@ class HiveViewer(QSplitter):
 
         self.keyView = QTreeView()
         self.valueView = QTreeView()
+        self.valueView.setRootIsDecorated(False)
 
         self.keyView.doubleClicked.connect(self.keyView_doubleClicked)
 
