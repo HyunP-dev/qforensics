@@ -30,7 +30,7 @@ class TextViewer(QWidget):
         navigator.layout().addWidget(QLabel("/"))
         self.pages = QLabel("")
         navigator.layout().addWidget(self.pages)
-        spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         navigator.layout().addItem(spacer)
         navigator.layout().addWidget(QLabel("Encoding: "))
 

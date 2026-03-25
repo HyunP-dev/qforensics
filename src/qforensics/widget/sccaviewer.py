@@ -21,7 +21,7 @@ class TableView(QWidget):
         # self.layout().addWidget(header)
 
         self._treeview = QTreeView()
-        self._treeview.setEditTriggers(QTreeView.NoEditTriggers)
+        self._treeview.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
         self.layout().addWidget(self._treeview)
 
     @property

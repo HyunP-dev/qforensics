@@ -34,8 +34,8 @@ class EmbedPhotoViewer(QLabel):
         super().__init__(parent=parent)
 
         self._pixmap = QPixmap()
-        self.setAlignment(Qt.AlignCenter)
-        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
 
     def open(self, raw: bytes):
         if not self._pixmap.loadFromData(raw):
