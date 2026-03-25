@@ -126,10 +126,10 @@ class MainWindow(QMainWindow):
     @Slot(QModelIndex)
     def filesViewDoubleClicked(self, index: QModelIndex):
         entry = index.data(Qt.ItemDataRole.UserRole)
-        
+
         if not isinstance(entry, pytsk3.File):
             return
-        
+
         self.preview.replace_widget(QWidget())
 
         if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_REG:
@@ -140,12 +140,12 @@ class MainWindow(QMainWindow):
                 stream.seek(0)
 
                 result = False
-                if stream.read(4) == b"\xFF\xD8\xFF\xE1":
+                if stream.read(4) == b"\xff\xd8\xff\xe1":
                     result = True
 
                 stream.seek(offset)
                 return result
-            
+
             if is_jpg(stream):
                 viewer = PhotoViewer(parent=self)
                 viewer.open(stream.read())

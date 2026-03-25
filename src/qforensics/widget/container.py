@@ -17,6 +17,6 @@ class DynamicContainer(QWidget):
         if self.current_content:
             self._layout.removeWidget(self.current_content)
             self.current_content.deleteLater()
-        
+
         self.current_content = new_widget
         self._layout.addWidget(new_widget)

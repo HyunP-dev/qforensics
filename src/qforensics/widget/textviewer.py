@@ -67,8 +67,9 @@ class TextViewer(QWidget):
     def show(self, page: int):
         io = self.io
         io.seek(0x4000 * (page - 1))
-        self.view.setPlainText(io.read(0x4000).decode(self.encodingCBox.currentText(), "ignore"))
+        self.view.setPlainText(
+            io.read(0x4000).decode(self.encodingCBox.currentText(), "ignore")
+        )
 
     def changed(self):
         self.show(self.pageSpinBox.value())
-    

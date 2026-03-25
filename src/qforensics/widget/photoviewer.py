@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import exif
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
-import exif
 
 class PhotoViewer(QSplitter):
     def __init__(self, parent=None):
@@ -13,7 +13,7 @@ class PhotoViewer(QSplitter):
         self._metaView = QTreeView(self)
         self._metaView.setRootIsDecorated(False)
         self._metaView.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
-        
+
         self.addWidget(self._metaView)
         self.addWidget(self._embed)
         self.setSizes([300, 900])
@@ -36,7 +36,7 @@ class EmbedPhotoViewer(QLabel):
         self._pixmap = QPixmap()
         self.setAlignment(Qt.AlignCenter)
         self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-    
+
     def open(self, raw: bytes):
         if not self._pixmap.loadFromData(raw):
             return
@@ -50,7 +50,7 @@ class EmbedPhotoViewer(QLabel):
         if not self._pixmap.isNull():
             scaled = self._pixmap.scaled(
                 self.size(),
-                Qt.AspectRatioMode.KeepAspectRatio, 
-                Qt.TransformationMode.SmoothTransformation
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
             )
             self.setPixmap(scaled)
