@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.setWindowTitle("Qforensics : : Digital Forensics OSS")
         self.setStyleSheet("""
         QDockWidget::title {
             padding: 3px;

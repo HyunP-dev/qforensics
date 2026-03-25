@@ -29,6 +29,20 @@ wheels = [
 ]
 
 [[package]]
+name = "libregf-python"
+version = "20240421"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/31/af/4e23e30f2d24923b00bc1e1a980a8c4d262ac65e33de22741374a1a791d2/libregf-python-20240421.tar.gz", hash = "sha256:a186c2475cd7e7d0a3e3241b3357e4e520bf605075e019a22f41789a2c741afc", size = 1704892, upload-time = "2024-04-21T08:08:39.93Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a0/89/de8586a954d8f4ea16e7896b7c713863bdd6dddaed432bd385d6d7e62947/libregf_python-20240421-cp311-cp311-macosx_12_0_x86_64.whl", hash = "sha256:75525b02eab38b4fe39bb166d3ce6dbe324fb13109e1a8716509429ee984cdf6", size = 532644, upload-time = "2024-04-22T18:12:02.789Z" },
+    { url = "https://files.pythonhosted.org/packages/6b/ec/77d4b7a032cec8f3312bc3d326ca440bbc51660732ccc0d78b1d289cef6b/libregf_python-20240421-cp311-cp311-win32.whl", hash = "sha256:413e39b93fe0c6ec46b37e2e4d0dda21e87e64be29880ad538aef2ada82a5e3a", size = 237022, upload-time = "2024-04-22T17:28:07.566Z" },
+    { url = "https://files.pythonhosted.org/packages/c6/6b/c888b01ebb62566c7b4e713858255b02979f6bad8144c875a7884c2d3868/libregf_python-20240421-cp311-cp311-win_amd64.whl", hash = "sha256:e53d7359cf90a67ef1d60227494430fa9eceb9102f1ccb05e73fe79bb25f7ae6", size = 258552, upload-time = "2024-04-22T17:35:59.817Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/18/509c32553388d87d6f76d2188f1cc78e5d8c8e498236dd1d5c734bff94c3/libregf_python-20240421-cp312-cp312-macosx_12_0_x86_64.whl", hash = "sha256:d68712140027662f4fb64bac17854eecc6e3084925a04314cb723941b5fb3920", size = 532636, upload-time = "2024-04-22T18:17:14.998Z" },
+    { url = "https://files.pythonhosted.org/packages/6d/74/05d9cda233768f93a7a911f0b7b7fb5af38da4c05145e8d45ce7b51103b9/libregf_python-20240421-cp312-cp312-win32.whl", hash = "sha256:915a40b67f688aab34f5f84907bddd05e3297e8fd382d402378f33998ce85186", size = 237022, upload-time = "2024-04-22T17:43:08.591Z" },
+    { url = "https://files.pythonhosted.org/packages/b3/0d/f2f150f710c4b67d35bdc7988c925adac0d2530bcbf166c6424c5003968b/libregf_python-20240421-cp312-cp312-win_amd64.whl", hash = "sha256:55a8a0388cc941c594177ff584e4baa60e4de637a9c4701f1e79b18ad03501e0", size = 258550, upload-time = "2024-04-22T17:50:18.821Z" },
+]
+
+[[package]]
 name = "libscca-python"
 version = "20250912"
 source = { registry = "https://pypi.org/simple" }
@@ -115,6 +129,7 @@ source = { editable = "." }
 dependencies = [
     { name = "exif" },
     { name = "libewf-python" },
+    { name = "libregf-python" },
     { name = "libscca-python" },
     { name = "pyside6" },
     { name = "pytsk3" },
@@ -125,6 +140,7 @@ dependencies = [
 requires-dist = [
     { name = "exif", specifier = ">=1.6.1" },
     { name = "libewf-python", specifier = ">=20240506,<20240507" },
+    { name = "libregf-python", specifier = ">=20240421" },
     { name = "libscca-python", specifier = ">=20250912,<20250913" },
     { name = "pyside6", specifier = ">=6.9.2,<7.0.0" },
     { name = "pytsk3", specifier = ">=20250729,<20250730" },
