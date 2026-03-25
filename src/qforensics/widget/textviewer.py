@@ -54,13 +54,13 @@ class TextViewer(QWidget):
         self.layout().addWidget(self.view)
 
         self.io = BytesIO()
-        self.size = 0
+        self.filesize = 0
 
     def upload(self, io: BytesIO):
         self.io = io
         self.io.seek(0, 2)
-        self.size = self.io.tell()
-        maximum = ceil(self.size / 0x4000)
+        self.filesize = self.io.tell()
+        maximum = ceil(self.filesize / 0x4000)
         self.pageSpinBox.setMaximum(maximum)
         self.pages.setText(str(maximum))
 
