@@ -4,8 +4,32 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
+import exif
 
-class PhotoViewer(QLabel):
+class PhotoViewer(QSplitter):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self._embed = EmbedPhotoViewer(self)
+        self._metaView = QTreeView(self)
+        self._metaView.setRootIsDecorated(False)
+        self._metaView.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
+        
+        self.addWidget(self._metaView)
+        self.addWidget(self._embed)
+        self.setSizes([300, 900])
+
+    def open(self, raw: bytes):
+        self._embed.open(raw)
+        model = QStandardItemModel()
+        model.setHorizontalHeaderLabels(["Key", "Value"])
+
+        image = exif.Image(raw)
+        for key, value in image.get_all().items():
+            model.appendRow([QStandardItem(key), QStandardItem(str(value))])
+        self._metaView.setModel(model)
+
+
+class EmbedPhotoViewer(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 

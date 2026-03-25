@@ -1,4 +1,5 @@
 from io import *
+import datetime
 
 import pyscca
 from PySide6.QtCore import *
@@ -68,3 +69,19 @@ class SCCAViewer(QSplitter):
                 break
             print(last_time)
         self.timesView.model = timesModel
+
+        volumesModel = QStandardItemModel()
+        volumesModel.setHorizontalHeaderLabels(["Device Path", "Serial Number", "Creation Time"])
+        nvols = handle.get_number_of_volumes()
+        for i in range(nvols):
+            vol_info = handle.get_volume_information(i)
+            if vol_info is None:
+                break
+            ctime: datetime.datetime = vol_info.get_creation_time()
+            device_path: str = vol_info.get_device_path()
+            serial_number: int = vol_info.get_serial_number()
+
+            volumesModel.appendRow([QStandardItem(device_path), 
+                                    QStandardItem(str(serial_number)),
+                                    QStandardItem(str(ctime))])
+        self.volumesView.model = volumesModel

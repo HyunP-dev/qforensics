@@ -9,6 +9,8 @@ class DynamicContainer(QWidget):
     def __init__(self):
         super().__init__()
         self._layout = QVBoxLayout(self)
+        self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setSpacing(0)
         self.current_content = None
 
     def replace_widget(self, new_widget: QWidget):

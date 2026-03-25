@@ -3,6 +3,18 @@ revision = 3
 requires-python = ">=3.11, <3.14"
 
 [[package]]
+name = "exif"
+version = "1.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "plum-py" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/52/21/34c46fbda54648afdcc66f0eec0ac91675361017abcdcdd23bd88fa74cc5/exif-1.6.1.tar.gz", hash = "sha256:763599b89b9b67495713060a703f32d1874abf8f0628c9d77711c2c06a5f44c8", size = 24052, upload-time = "2024-12-10T04:38:35.812Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/67/07/a47a78be02b0a2d273358312f3e2eecc4981d4604f8a6e6b8ef27c1e9c2d/exif-1.6.1-py3-none-any.whl", hash = "sha256:2879830e2d8f0e5f1503110736bceb83a1e9c2121b32c23208c04284be5afbec", size = 30461, upload-time = "2024-12-10T04:38:33.547Z" },
+]
+
+[[package]]
 name = "libewf-python"
 version = "20240506"
 source = { registry = "https://pypi.org/simple" }
@@ -31,6 +43,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/8f/1d/c341c83c68e19529f82e5498cabc43cff729b8dab9e215c9551c583a9c10/libscca_python-20250912-cp313-cp313-macosx_14_0_x86_64.whl", hash = "sha256:9cec132acc05ac3203ee4ab0854505defa355acb770547fad94ec1acefe38a5d", size = 534511, upload-time = "2025-09-13T14:25:16.038Z" },
     { url = "https://files.pythonhosted.org/packages/ab/c8/30e9feb5fc85fde4015e833e2eb3fe6145aac41ab0b6db381ab8a482c4b8/libscca_python-20250912-cp313-cp313-win32.whl", hash = "sha256:f5b0341808f1055ea2a869a689c92a1249012fbfa57bc2fad1391ec850f622a6", size = 380863, upload-time = "2025-09-13T13:30:12.838Z" },
     { url = "https://files.pythonhosted.org/packages/43/06/4dcf3881e39703de707286be5512451ae4d6675c0eadd9ff3fcb86005d61/libscca_python-20250912-cp313-cp313-win_amd64.whl", hash = "sha256:6b6191232891516be48c56023e7942f4c2b9675707d79fb98133ba6b17842384", size = 402806, upload-time = "2025-09-13T13:23:25.964Z" },
+]
+
+[[package]]
+name = "plum-py"
+version = "0.8.7"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/3a/2a/a650b0cde5a15f4a9375df43bd7eacaffb65b30c8395b6b6cd84df2bf7ae/plum-py-0.8.7.tar.gz", hash = "sha256:40a25a70f7fd213f57cdd1decc65874df2d213d19d63478a1addcca748c13c4e", size = 116231, upload-time = "2024-05-12T02:01:48.18Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2f/da/8a9bdf5d3ea4b13d3142e0c77d6e85e4c2668aef6e4b9d5e9a6619049bdc/plum_py-0.8.7-py3-none-any.whl", hash = "sha256:d791f059ef159adbe3c3b036557b5b431fa07db226a9de106a74e5e57441741d", size = 69991, upload-time = "2023-08-14T21:56:31.953Z" },
 ]
 
 [[package]]
@@ -92,6 +113,7 @@ name = "qforensics"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "exif" },
     { name = "libewf-python" },
     { name = "libscca-python" },
     { name = "pyside6" },
@@ -101,6 +123,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "exif", specifier = ">=1.6.1" },
     { name = "libewf-python", specifier = ">=20240506,<20240507" },
     { name = "libscca-python", specifier = ">=20250912,<20250913" },
     { name = "pyside6", specifier = ">=6.9.2,<7.0.0" },
