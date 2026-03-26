@@ -120,8 +120,8 @@ class HiveValueModel(QAbstractTableModel):
     
     def data(self, index:QModelIndex, role=Qt.ItemDataRole):
         value = self.key.get_value(index.row())
+        type_str = self.VALUES_TYPE[value.get_type()]
         if role == Qt.ItemDataRole.DisplayRole:
-            type_str = self.VALUES_TYPE[value.get_type()]
             match index.column():
                 case 0:
                     return value.get_name() or "(Default)"
@@ -135,6 +135,14 @@ class HiveValueModel(QAbstractTableModel):
                     if "INTEGER" in type_str:
                         return hex(value.get_data_as_integer())
                     return str(value.get_data())
+        if role == Qt.ItemDataRole.DecorationRole and index.column() == 0:
+            if value.get_type() == pyregf.value_types.STRING:
+                return QIcon("images/icons/document-attribute-s.png")
+            if value.get_type() == pyregf.value_types.BINARY_DATA:
+                return QIcon("images/icons/document-binary.png")
+            if "INTEGER" in type_str:
+                return QIcon("images/icons/document-number-1.png")
+            return QIcon("images/icons/document.png")
 
     def headerData(self, section, orientation, /, role=...):
         if orientation == Qt.Orientation.Horizontal:
