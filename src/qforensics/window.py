@@ -4,6 +4,7 @@ import os
 import platform
 from io import BytesIO
 
+import pyregf
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -13,6 +14,7 @@ from qforensics.model.evidencemodel import *
 from qforensics.type.tskwrapper import TSKBytesIO
 from qforensics.widget import *
 from qforensics.widget.container import DynamicContainer
+from qforensics.widget.hiveviewer import HiveViewer
 from qforensics.widget.photoviewer import PhotoViewer
 
 
@@ -165,6 +167,21 @@ class MainWindow(QMainWindow):
 
                 stream.seek(offset)
                 return False
+            
+            def is_regf(stream: TSKBytesIO) -> bool:
+                offset = stream.tell()
+                stream.seek(0)
+                if stream.read(4) == b"regf":
+                    stream.seek(offset)
+                    return True
+
+                stream.seek(offset)
+                return False
+            
+            if is_regf(stream):
+                viewer = HiveViewer()
+                self.preview.replace_widget(viewer)
+                viewer.parse(TSKBytesIO(entry))
 
             if is_prefetch(stream):
                 viewer = SCCAViewer()

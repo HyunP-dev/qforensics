@@ -1,4 +1,5 @@
 from __future__ import annotations
+from io import BytesIO
 
 import pyregf
 from PySide6.QtCore import *
@@ -41,9 +42,11 @@ class HiveKeyItem(tree.Node):
 
 
 class HiveKeyModel(QAbstractItemModel):
-    def __init__(self, handle: pyregf.file):
+    def __init__(self, io):
         super().__init__()
         self.root_item = HiveKeyRootItem()
+        handle: pyregf.file = pyregf.file()
+        handle.open_file_object(io)
         self.root_item.children.append(
             HiveKeyItem(self.root_item, handle.get_root_key())
         )
@@ -68,6 +71,9 @@ class HiveKeyModel(QAbstractItemModel):
             if isinstance(item, HiveKeyItem):
                 return item.key.get_name()
             return None
+        
+        if role == Qt.ItemDataRole.DecorationRole:
+            return QIcon("images/icons/folder.png")
         return None
 
     def index(self, row, column, parent=QModelIndex()):
@@ -137,25 +143,35 @@ class HiveValueModel(QAbstractTableModel):
 
 
 
-class HiveViewer(QSplitter):
-    def __init__(self, parent):
+class HiveViewer(QWidget):
+    def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.setLayout(layout:=QVBoxLayout())
 
+        self.splitter = QSplitter()
         self.keyView = QTreeView()
+        self.keyView.setHeaderHidden(True)
+
         self.valueView = QTreeView()
         self.valueView.setRootIsDecorated(False)
 
         self.keyView.doubleClicked.connect(self.keyView_doubleClicked)
 
-        self.addWidget(self.keyView)
-        self.addWidget(self.valueView)
+        self.splitter.addWidget(self.keyView)
+        self.splitter.addWidget(self.valueView)
 
-        self.setSizes([300, 750])
+        self.splitter.setSizes([300, 750])
+
+        layout.addWidget(self.splitter)
     
     @Slot(QModelIndex)
     def keyView_doubleClicked(self, index: QModelIndex):
         key = index.internalPointer().key
         self.valueView.setModel(HiveValueModel(key))
+
+    def parse(self, io):
+        model = HiveKeyModel(io)
+        self.keyView.setModel(model)
 
 def main():
     app = QApplication()
@@ -163,10 +179,9 @@ def main():
     # window.show()
     viewer = HiveViewer(None)
 
-    handle = pyregf.file()
-    handle.open("D:\\Personal\\software")
+    with open("D:\\Personal\\software", "rb") as f:
+        model = HiveKeyModel(BytesIO(f.read()))
 
-    model = HiveKeyModel(handle)
     viewer.keyView.setModel(model)
     
     viewer.show()
