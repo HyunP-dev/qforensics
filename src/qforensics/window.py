@@ -13,8 +13,6 @@ from qforensics.model.evidencemodel import *
 from qforensics.type.tskwrapper import TSKBytesIO
 from qforensics.widget import *
 from qforensics.widget.container import DynamicContainer
-from qforensics.widget.hiveviewer import HiveViewer
-from qforensics.widget.photoviewer import PhotoViewer
 
 
 class MainWindow(QMainWindow):
@@ -26,57 +24,77 @@ class MainWindow(QMainWindow):
         QDockWidget::title {
             padding: 3px;
             border: 1px solid #a0a0a0;
-            border-radius: 1px;
+            border-radius: 2px;
+        }
+                           
+        QTreeView {
+            border: 0;
+        }
+                           
+        QHeaderView::section {
+            background-color: #fff;
+            color: #000;
+            padding-left: 4px;
+            border: none;
+            border-right: 1px solid #e5e5e5;
+        }
+                           
+        QHeaderView::section:hover {
+            background-color: #d9ebf9;
+        }
+
+        QHeaderView::section:checked {
+            background-color: #bcdcf4;
         }
         """)
 
         self.setCorner(Qt.Corner.TopLeftCorner, Qt.DockWidgetArea.LeftDockWidgetArea)
         self.setCorner(Qt.Corner.BottomLeftCorner, Qt.DockWidgetArea.LeftDockWidgetArea)
         self.setCorner(Qt.Corner.TopRightCorner, Qt.DockWidgetArea.RightDockWidgetArea)
-        self.setCorner(Qt.Corner.BottomRightCorner, Qt.DockWidgetArea.RightDockWidgetArea)
+        self.setCorner(
+            Qt.Corner.BottomRightCorner, Qt.DockWidgetArea.RightDockWidgetArea
+        )
 
         self.addToolBar(toolbar := QToolBar())
-        toolbar.setFloatable(False)
-        toolbar.setMovable(False)
-        toolbar.setFixedHeight(24)
-        attachAction = QAction("이미지 탑재", self)
-        attachAction.setIcon(
-            QIcon(os.path.join(__file__, "..", "resources/icons/drive--plus.png"))
-        )
+        toolbar.setStyleSheet("border: none;")
+        # toolbar.setFloatable(False)
+        # toolbar.setMovable(False)
+        # toolbar.setFixedHeight(24)
+        toolbar.setIconSize(QSize(16, 16))
+        attachAction = QAction("증거 이미지 탑재", self)
+
+        attachAction.setIcon(QIcon("images/icons/drive--plus.png"))
         attachAction.triggered.connect(self.load)
 
         toolbar.addAction(attachAction)
 
         self.menuBar().addMenu(filemenu := QMenu("파일"))
+        self.menuBar().addMenu(viewmenu := QMenu("보기"))
+        self.menuBar().addMenu(helpmenu := QMenu("도움말"))
+        self.menuBar().setStyleSheet("border: none; padding: 3px;")
 
-        attachAction = QAction("이미지 탑재", self)
-        attachAction.triggered.connect(self.load)
+        # attachAction = QAction("이미지 탑재", self)
+        # attachAction.triggered.connect(self.load)
         filemenu.addAction(attachAction)
 
         self.evidenceTree = QTreeView()
+        # self.evidenceTree.setFrameShape(QFrame.Shape.NoFrame)
         self.evidenceTree.setModel(EvidenceTreeModel())
         self.evidenceTree.setHeaderHidden(True)
         self.evidenceTree.doubleClicked.connect(self.evidenceTreeDoubleClicked)
         self.evidenceTree.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
 
         evidenceTreeDock = QDockWidget("탐색 트리", self)
-        # evidenceTreeDock.setLayout(QVBoxLayout())
-
-        # evidenceTreeDock.layout().setContentsMargins(0, 0, 0, 0)
         evidenceTreeDock.setWidget(self.evidenceTree)
 
-        self.resultTree = QTreeView()
-        self.resultTree.setModel(ArtifactModel())
-        self.resultTree.setHeaderHidden(True)
-        self.resultTree.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
-        self.resultTree.expandAll()
-        self.resultTree.doubleClicked.connect(self.resultViewDoubleClicked)
-
         filesView = QTreeView()
+        filesView.header().setSectionsClickable(True)
+        
         self.filesView = filesView
         filesView.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
         filesView.setRootIsDecorated(False)
         filesView.doubleClicked.connect(self.filesViewDoubleClicked)
+        filesView.setModel(TSKFileBrowserModel())
 
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, evidenceTreeDock)
 
@@ -103,13 +121,9 @@ class MainWindow(QMainWindow):
 
         self.resize(1000, 600)
 
-    @Slot(int)
-    def leftTabBarClicked(self, index):
-        print(index)
-
-    def showFiles(self, *directories):
+    def showFiles(self, directory):
         model = TSKFileBrowserModel()
-        model.open_dir(directories[0])
+        model.open_dir(directory)
         self.filesView.setModel(model)
 
     @Slot(QModelIndex)
@@ -168,7 +182,7 @@ class MainWindow(QMainWindow):
 
                 stream.seek(offset)
                 return False
-            
+
             def is_regf(stream: TSKBytesIO) -> bool:
                 offset = stream.tell()
                 stream.seek(0)
@@ -178,7 +192,7 @@ class MainWindow(QMainWindow):
 
                 stream.seek(offset)
                 return False
-            
+
             if is_regf(stream):
                 viewer = HiveViewer()
                 self.preview.replace_widget(viewer)
@@ -195,30 +209,9 @@ class MainWindow(QMainWindow):
             else:
                 self.hexview.upload(BytesIO())
                 self.textview.upload(BytesIO())
-                
+
             self.hexview.show(1)
             self.textview.show(1)
-
-    @Slot(QModelIndex)
-    def resultViewDoubleClicked(self, index: QModelIndex):
-        match index.data(Qt.ItemDataRole.DisplayRole):
-            case "프로그램 실행 기록":
-                model = self.evidenceTree.model()
-                if not isinstance(model, EvidenceTreeModel):
-                    return
-                
-                directories = []
-                for image_item in model.root_item.children:
-                    match image_item:
-                        case EWFImageItem():
-                            for fs in image_item.filesystems:
-                                try:
-                                    directory = fs.open_dir("/Windows/Prefetch", 2)
-                                    directories.append(directory)
-
-                                except:
-                                    continue
-                self.showFiles(*directories)
 
     @Slot()
     def load(self):
@@ -228,5 +221,5 @@ class MainWindow(QMainWindow):
             return
         if platform.system() == "Windows":
             path = path.replace("/", "\\")
-        if isinstance(model:=self.evidenceTree.model(), EvidenceTreeModel):
+        if isinstance(model := self.evidenceTree.model(), EvidenceTreeModel):
             model.upload(path)

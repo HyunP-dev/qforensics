@@ -27,5 +27,8 @@ packages = [{include = "qforensics", from = "src"}]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[dependency-groups]
+dev = []
+
 [tool.ruff.lint]
 ignore = ["F403", "F405", "E722"]
