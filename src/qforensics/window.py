@@ -73,12 +73,9 @@ class MainWindow(QMainWindow):
         self.menuBar().addMenu(helpmenu := QMenu("도움말"))
         self.menuBar().setStyleSheet("border: none; padding: 3px;")
 
-        # attachAction = QAction("이미지 탑재", self)
-        # attachAction.triggered.connect(self.load)
         filemenu.addAction(attachAction)
 
         self.evidenceTree = QTreeView()
-        # self.evidenceTree.setFrameShape(QFrame.Shape.NoFrame)
         self.evidenceTree.setModel(EvidenceTreeModel())
         self.evidenceTree.setHeaderHidden(True)
         self.evidenceTree.doubleClicked.connect(self.evidenceTreeDoubleClicked)
@@ -89,7 +86,7 @@ class MainWindow(QMainWindow):
 
         filesView = QTreeView()
         filesView.header().setSectionsClickable(True)
-        
+
         self.filesView = filesView
         filesView.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
         filesView.setRootIsDecorated(False)
@@ -110,6 +107,14 @@ class MainWindow(QMainWindow):
         self.viewerTabs = viewerTabs
         self.preview = DynamicContainer()
         viewerTabs.addTab(self.preview, "미리보기")
+
+        self.propsView = QTreeView()
+        propsDock = QDockWidget("속성", self)
+        propsDock.setWidget(self.propsView)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, propsDock)
+        self.resizeDocks(
+            [evidenceTreeDock, propsDock], [70, 40], Qt.Orientation.Vertical
+        )
 
         self.setDockNestingEnabled(True)
         self.resizeDocks(
@@ -148,6 +153,22 @@ class MainWindow(QMainWindow):
             return
 
         self.preview.replace_widget(QWidget())
+
+        propsModel = QStandardItemModel()
+        propsModel.setHorizontalHeaderLabels(["속성", "값"])
+        propsModel.appendRow(
+            [QStandardItem("파일명"), QStandardItem(entry.info.name.name.decode())]
+        )
+        propsModel.appendRow(
+            [
+                QStandardItem("파일 타입"),
+                QStandardItem(
+                    TSKFileBrowserModel.fstype_to_string(entry.info.meta.type)
+                ),
+            ]
+        )
+        
+        self.propsView.setModel(propsModel)
 
         if entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_REG:
             stream = TSKBytesIO(entry)
