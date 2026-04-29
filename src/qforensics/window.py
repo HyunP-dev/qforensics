@@ -20,33 +20,8 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Qforensics : : Digital Forensics OSS")
-        self.setStyleSheet("""
-        QDockWidget::title {
-            padding: 3px;
-            border: 1px solid #a0a0a0;
-            border-radius: 2px;
-        }
-                           
-        QTreeView {
-            border: 0;
-        }
-                           
-        QHeaderView::section {
-            background-color: #fff;
-            color: #000;
-            padding-left: 4px;
-            border: none;
-            border-right: 1px solid #e5e5e5;
-        }
-                           
-        QHeaderView::section:hover {
-            background-color: #d9ebf9;
-        }
-
-        QHeaderView::section:checked {
-            background-color: #bcdcf4;
-        }
-        """)
+        with open("styles/dark.qss") as f:
+            self.setStyleSheet(f.read())
 
         self.setCorner(Qt.Corner.TopLeftCorner, Qt.DockWidgetArea.LeftDockWidgetArea)
         self.setCorner(Qt.Corner.BottomLeftCorner, Qt.DockWidgetArea.LeftDockWidgetArea)
@@ -57,9 +32,7 @@ class MainWindow(QMainWindow):
 
         self.addToolBar(toolbar := QToolBar())
         toolbar.setStyleSheet("border: none;")
-        # toolbar.setFloatable(False)
-        # toolbar.setMovable(False)
-        # toolbar.setFixedHeight(24)
+        
         toolbar.setIconSize(QSize(16, 16))
         attachAction = QAction("증거 이미지 탑재", self)
 

@@ -1,0 +1,25 @@
+QDockWidget::title {
+    padding: 3px;
+    border: 1px solid #a0a0a0;
+    border-radius: 2px;
+}
+
+QTreeView {
+    border: 0;
+}
+                   
+QHeaderView::section {
+    background-color: #fff;
+    color: #000;
+    padding-left: 4px;
+    border: none;
+    border-right: 1px solid #e5e5e5;
+}
+                   
+QHeaderView::section:hover {
+    background-color: #d9ebf9;
+}
+
+QHeaderView::section:checked {
+    background-color: #bcdcf4;
+}
