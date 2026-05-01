@@ -3,54 +3,54 @@ QDockWidget::title {
     border: 1px solid #a0a0a0;
     border-radius: 2px;
 }
-                           
-QTreeView {
-    border: 0;
-}
-                   
+
 QTabBar::tab {
-    background: #3d3d3d;
+    background: #323232;
     color: #bbbbbb;
-    border: 0px solid #222222;
-    border-bottom: none;
-    padding: 6px 15px;
+    border: none;
+    padding: 5px 15px 6px 15px;
     margin-right: 0px;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     min-width: 60px;
     border-radius: 0;
 }
-                   
+
 QTabBar::tab:selected {
-    background: #007aff;
+    background: #2c61c8;
     color: white;
-    border: 1px solid #005bbb;
+    border: 1px solid #2c61c8;
     font-weight: bold;
 }
-                   
+
 QTabBar::tab:hover:!selected {
-    background: #4d4d4d;
+    background: #404040;
 }
 
 QTabWidget::pane {
-    border: 1px solid #222222;
-    background: #1e1e1e;
+    border-top: 1px solid black;
+    /* background: #323232; */
 }
-                   
+
 QTabWidget::tab-bar {
     left: 0px;
 }
-                   
+
 QMainWindow::separator {
     background-color: black;
     width: 1px;
     height: 1px;
 }
-                   
+
+QDockWidget {
+    font-size: 12pt;
+    color: white;
+}
+
 QDockWidget::title {
     padding: 7px;
     border: none;
-    border-top: 1px solid black; /*#2d2d2d;*/
+    border-top: 1px solid black;
     border-bottom: 1px solid black;
     border-radius: 0;
     background-color: #323232;
@@ -58,4 +58,34 @@ QDockWidget::title {
 
 QDockWidget::close-button {
     padding-left: 4px;
+}
+
+QStatusBar {
+    border-top: 1px solid black;
+}
+
+QHeaderView::section {
+    padding: 2px;
+    padding-left: 8px;
+    font-size: 11pt;
+
+    border: none;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+QSplitter::handle {
+    background-color: black;
+}
+
+QSplitter::handle:horizontal {
+    width: 1px;
+}
+
+QSplitter::handle:vertical {
+    height: 1px;
+}
+
+QFrame {
+    border: none;
 }

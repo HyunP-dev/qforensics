@@ -156,8 +156,11 @@ class HiveViewer(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setLayout(layout:=QVBoxLayout())
+        layout.setContentsMargins(0, 0, 0, 0)
 
         self.splitter = QSplitter()
+        self.splitter.setContentsMargins(0, 0, 0, 0)
+        
         self.keyView = QTreeView()
         self.keyView.setHeaderHidden(True)
 
