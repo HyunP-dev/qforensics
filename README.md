@@ -19,4 +19,4 @@ qforensics
 
 ## Screenshots
 
-![](screenshots/capture-macos-dark.png)
+![](screenshots/capture-macos-dark-windowed.png)
